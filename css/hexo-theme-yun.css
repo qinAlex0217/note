@@ -510,6 +510,10 @@ body::before {
   margin: 5px 5px 0 5px;
   color: #0078E7;
 }
+#busuanzi_value_site_uv,
+#busuanzi_value_site_pv {
+  margin-left: 0.2rem;
+}
 .moe-text {
   margin: 0 5px;
 }
@@ -1971,29 +1975,6 @@ pre[class*='language-']:hover .copy-btn {
 }
 #search .icon {
   color: #0078e7;
-}
-#comment {
-  margin: 0 1rem;
-  padding: 1rem;
-  background-color: var(--post-block-bg-color);
-}
-@media screen and (max-width: 768px) {
-  #comment {
-    margin: 0;
-  }
-}
-.comment-tooltip {
-  font-size: 0.8rem;
-  color: var(--hty-text-color);
-}
-#github-issues {
-  margin: 1rem;
-}
-.v[data-class=v] p {
-  color: var(--hty-text-color) !important;
-}
-.v[data-class=v] p code {
-  color: #000;
 }
 #say {
   color: var(--hty-text-color);
