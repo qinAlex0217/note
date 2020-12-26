@@ -1,1 +1,100 @@
-"use strict";function _toConsumableArray(e){return _arrayWithoutHoles(e)||_iterableToArray(e)||_unsupportedIterableToArray(e)||_nonIterableSpread()}function _nonIterableSpread(){throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}function _unsupportedIterableToArray(e,t){if(e){if("string"==typeof e)return _arrayLikeToArray(e,t);var r=Object.prototype.toString.call(e).slice(8,-1);return"Object"===r&&e.constructor&&(r=e.constructor.name),"Map"===r||"Set"===r?Array.from(e):"Arguments"===r||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(r)?_arrayLikeToArray(e,t):void 0}}function _iterableToArray(e){if("undefined"!=typeof Symbol&&Symbol.iterator in Object(e))return Array.from(e)}function _arrayWithoutHoles(e){if(Array.isArray(e))return _arrayLikeToArray(e)}function _arrayLikeToArray(e,t){(null==t||t>e.length)&&(t=e.length);for(var r=0,n=new Array(t);r<t;r++)n[r]=e[r];return n}function toggleSidebarNav(){var t="sidebar-nav-active",r="sidebar-panel-active";document.querySelectorAll(".sidebar-nav li").forEach(function(e){e.onclick=function(){this.classList.contains(t)||(document.querySelector("."+r).classList.remove(r),document.querySelector("#"+this.dataset.target).classList.add(r),document.querySelector("."+t).classList.remove(t),this.classList.add(t))}})}function listennSidebarTOC(){var a,i=document.querySelectorAll(".post-toc li");i.length&&(a=[].concat(_toConsumableArray(i)).map(function(e){var e=e.querySelector(".toc-link"),t=document.getElementById(decodeURI(e.getAttribute("href")).replace("#",""));return e.addEventListener("click",function(e){e.preventDefault(),window.scrollTo(0,t.offsetTop+1)}),t}),function n(o){o=Math.floor(o+1e4);var t=new IntersectionObserver(function(e,t){var r=document.documentElement.scrollHeight+100;if(o<r)return t.disconnect(),void n(r);e=function(e){var t=0,r=e[t];if(0<r.boundingClientRect.top)return 0===(t=a.indexOf(r.target))?0:t-1;for(;t<e.length;t++){if(!(e[t].boundingClientRect.top<=0))return a.indexOf(r.target);r=e[t]}return a.indexOf(r.target)}(e),function(e){if(!e.classList.contains("active-current")){document.querySelectorAll(".post-toc .active").forEach(function(e){e.classList.remove("active","active-current")}),e.classList.add("active","active-current");for(var t=e.parentNode;!t.matches(".post-toc");)t.matches("li")&&t.classList.add("active"),t=t.parentNode}}(i[e])},{rootMargin:o+"px 0px -100% 0px",threshold:0});a.forEach(function(e){e&&t.observe(e)})}(document.documentElement.scrollHeight))}function initSidebar(){toggleSidebarNav(),listennSidebarTOC()}document.addEventListener("DOMContentLoaded",initSidebar),document.addEventListener("pjax:success",initSidebar);
+function toggleSidebarNav() {
+  // toggle sidebar nav and panel
+  const activeTabClass = "sidebar-nav-active";
+  const activePanelClass = "sidebar-panel-active";
+  document.querySelectorAll(".sidebar-nav li").forEach((el) => {
+    el.onclick = function() {
+      if (this.classList.contains(activeTabClass)) return;
+      document
+        .querySelector("." + activePanelClass)
+        .classList.remove(activePanelClass);
+      document
+        .querySelector("#" + this.dataset.target)
+        .classList.add(activePanelClass);
+      document
+        .querySelector("." + activeTabClass)
+        .classList.remove(activeTabClass);
+      this.classList.add(activeTabClass);
+    };
+  });
+}
+
+function listennSidebarTOC() {
+  const navItems = document.querySelectorAll(".post-toc li");
+  if (!navItems.length) return;
+  const sections = [...navItems].map((element) => {
+    const link = element.querySelector(".toc-link");
+    const target = document.getElementById(
+      decodeURI(link.getAttribute("href")).replace("#", "")
+    );
+    link.addEventListener("click", (event) => {
+      event.preventDefault();
+      window.scrollTo(0, target.offsetTop + 1);
+    });
+    return target;
+  });
+
+  function activateNavByIndex(target) {
+    if (target.classList.contains("active-current")) return;
+
+    document.querySelectorAll(".post-toc .active").forEach((element) => {
+      element.classList.remove("active", "active-current");
+    });
+    target.classList.add("active", "active-current");
+    let parent = target.parentNode;
+    while (!parent.matches(".post-toc")) {
+      if (parent.matches("li")) parent.classList.add("active");
+      parent = parent.parentNode;
+    }
+  }
+
+  function findIndex(entries) {
+    let index = 0;
+    let entry = entries[index];
+    if (entry.boundingClientRect.top > 0) {
+      index = sections.indexOf(entry.target);
+      return index === 0 ? 0 : index - 1;
+    }
+    for (; index < entries.length; index++) {
+      if (entries[index].boundingClientRect.top <= 0) {
+        entry = entries[index];
+      } else {
+        return sections.indexOf(entry.target);
+      }
+    }
+    return sections.indexOf(entry.target);
+  }
+
+  function createIntersectionObserver(marginTop) {
+    marginTop = Math.floor(marginTop + 10000);
+    let intersectionObserver = new IntersectionObserver(
+      (entries, observe) => {
+        let scrollHeight = document.documentElement.scrollHeight + 100;
+        if (scrollHeight > marginTop) {
+          observe.disconnect();
+          createIntersectionObserver(scrollHeight);
+          return;
+        }
+        let index = findIndex(entries);
+        activateNavByIndex(navItems[index]);
+      },
+      {
+        rootMargin: marginTop + "px 0px -100% 0px",
+        threshold: 0,
+      }
+    );
+    sections.forEach((element) => {
+      element && intersectionObserver.observe(element);
+    });
+  }
+
+  createIntersectionObserver(document.documentElement.scrollHeight);
+}
+
+function initSidebar() {
+  toggleSidebarNav();
+  listennSidebarTOC();
+}
+
+document.addEventListener("DOMContentLoaded", initSidebar);
+document.addEventListener("pjax:success", initSidebar);

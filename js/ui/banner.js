@@ -1,1 +1,53 @@
-"use strict";function random(e,t){return Math.random()*(t-e)+e}function generateBanner(e){for(var t=0,n=document.querySelector(".vertical-line-top"),r=document.querySelector(".vertical-line-bottom"),a=0;a<e.length;a++){var i=e[a],o=document.createElement("div"),s=random(1.5,3.5);o.innerHTML="<span class='char'>"+i+"</span>";i=s+"rem";banner.insertBefore(o,r),o.classList.add("char-box"),a%2==0?(o.classList.add("char-left"),o.style.animationName="char-move-left"):(o.classList.add("char-right"),o.style.animationName="char-move-right"),o.style.setProperty("--banner-char-size",i);i=window.getComputedStyle(document.getElementsByClassName("char-box")[a]).getPropertyValue("width");o.style.setProperty("--banner-empty-border-size",i),t+=s}var l="calc(50vh - "+t/2+"rem)";n.style.setProperty("--banner-line-height",l),r.style.setProperty("--banner-line-height",l),n.style.animationName="extend-line",r.style.animationName="extend-line"}function initBanner(){window.banner&&setTimeout(function(){generateBanner(CONFIG.title)},100)}initBanner();
+// https://github.com/YunYouJun/hexo-theme-yun
+// YunYouJun <me@yunyoujun.cn>
+
+function random(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
+function generateBanner(title) {
+  let sumH = 0;
+  let lineTop = document.querySelector(".vertical-line-top");
+  let lineBottom = document.querySelector(".vertical-line-bottom");
+  for (let i = 0; i < title.length; i++) {
+    const char = title[i];
+    let charBox = document.createElement("div");
+    let rn = random(1.5, 3.5);
+    charBox.innerHTML = "<span class='char'>" + char + "</span>";
+    let charSize = rn + "rem";
+    banner.insertBefore(charBox, lineBottom);
+    charBox.classList.add("char-box");
+    if (i % 2 === 0) {
+      charBox.classList.add("char-left");
+      charBox.style.animationName = "char-move-left";
+    } else {
+      charBox.classList.add("char-right");
+      charBox.style.animationName = "char-move-right";
+    }
+    charBox.style.setProperty("--banner-char-size", charSize);
+
+    const width = window
+      .getComputedStyle(document.getElementsByClassName("char-box")[i])
+      .getPropertyValue("width");
+    charBox.style.setProperty("--banner-empty-border-size", width);
+
+    sumH += rn;
+  }
+  let height = "calc(50vh - " + sumH / 2 + "rem)";
+  lineTop.style.setProperty("--banner-line-height", height);
+  lineBottom.style.setProperty("--banner-line-height", height);
+
+  // set animation name
+  lineTop.style.animationName = "extend-line";
+  lineBottom.style.animationName = "extend-line";
+}
+
+function initBanner() {
+  if (window.banner) {
+    setTimeout(() => {
+      generateBanner(CONFIG.title);
+    }, 100);
+  }
+}
+
+initBanner();
